@@ -94,10 +94,14 @@ QED
 Theorem PRIME_FACTOR:
   ∀n. n ≠ 1 ⇒ ∃p. prime p ∧ p divides n
 Proof
-  completeInduct_on ‘n’
-
-
-
+  completeInduct_on ‘n’ >>
+  rw[] >>
+  Cases_on ‘prime n’ >-
+   qexists_tac ‘n’ >> rw[DIVIDES_REFL] >> (*instantiates goal with 'n'*)
+  ‘∃x. x divides n ∧ x ≠ 1 ∧ x ≠ n’ by
+    gs[prime_def] >> first_assum $ irule_at $ Pos hd >> fs[] >>
+    Cases_on ‘n’
+   
 
 val _ = new_theory "test";
 
