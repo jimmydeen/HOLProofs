@@ -38,11 +38,6 @@ Proof
   metis_tac [divides_def, MULT_CLAUSES]
 QED
 
-Theorem DIVIDES_TRANS:
-  ∀a b c. a divides b ∧  b divides c ⇒ a divides c
-Proof
-  rw[divides_def] >> qexists_tac ‘x * x'’ >> rw[]
-QED
 
 Theorem DIV_FACT:
   !m n. 0 < m /\ m <= n ==> m divides (FACT n)
@@ -99,20 +94,60 @@ QED
 Theorem PRIME_FACTOR:
   ∀n. n ≠ 1 ⇒ ∃p. prime p ∧ p divides n
 Proof
-  completeInduct_on ‘n’ >>
-  rw[] >>
-  Cases_on ‘prime n’ >-
-   (qexists_tac ‘n’ >> rw[DIVIDES_REFL]) (*instantiates goal with 'n'*)
-  >> ‘∃x. x divides n ∧ x ≠ 1 ∧ x ≠ n’ by
-   (gs[prime_def] >> first_assum $ irule_at $ Pos hd >> simp[]) >>
-  Cases_on ‘n’ >-
-   (qexists_tac ‘2’ >> rw[PRIME_2, DIVIDES_0]) >> 
-   drule_then strip_assume_tac DIVIDES_LE >>
-   rfs[LESS_OR_EQ] >>
-   last_assum (drule_all_then strip_assume_tac) >>
-  qexists_tac ‘p’ >>
-  rw[] >>
-  irule DIVIDES_TRANS >>
-  qexists_tac ‘x’ >>
+  completeInduct_on ‘n’
+
+
+
+
+val _ = new_theory "test";
+
+Theorem bla:
+  1 + 1 = 2
+Proof
   rw[]
-   
+QED
+
+
+        
+Definition my_append_def:
+  my_append [] xs = xs ∧
+  my_append (x::xs) ys = x::my_append xs ys
+End
+
+Theorem my_append_thm:
+  ∀xs. my_append xs [] = xs
+Proof
+  Induct_on ‘xs’
+  >- rw[my_append_def] >>
+  rw[my_append_def]
+QED
+
+Theorem my_append_thm:
+  ∀xs. my_append xs [] = xs
+Proof
+  Induct_on ‘xs’ >>
+  rw[my_append_def]
+
+  rw[]
+QED
+
+(*
+   >>   \\  THEN
+
+   tac1 >> tac2
+
+   apply tac1 to the goal state,
+    then apply tac2 to all subgoals produced by tac1
+
+
+   >-  THEN1
+
+   tac1 >- tac2
+
+   apply tac1 to the goal state,
+    then apply tac2 to the *first* subgoal produced by tac1,
+    fail if tac2 doesn't prove this goal
+
+ *)
+
+val _ = export_theory();
