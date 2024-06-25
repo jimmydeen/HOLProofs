@@ -69,7 +69,28 @@ Theorem DIVIDES_LE:
 Proof
   rw [divides_def] >> rw[]
 QED
-        
+
+Theorem DIVIDES_ONE:
+  ∀x. (x divides 1) = (x = 1)
+Proof
+  rw[divides_def]
+QED
+
+Theorem DIVIDES_SUB:
+  ∀d a b. d divides a ∧ d divides b ⇒ d divides (a-b)
+Proof
+  rw [divides_def, LEFT_SUB_DISTRIB] >>
+  qexists_tac ‘x-x'’ >>
+  rw[]
+QED
+
+Theorem DIVIDES_ADDL:
+  ∀d a b. d divides a ∧ d divides (a+b) ⇒ d divides b
+Proof
+  rw[divides_def] >>
+  qexists_tac ‘x'- x’ >> rw[]
+QED
+
 Theorem NOT_PRIME_0:
   ~prime 0
 Proof
@@ -115,4 +136,16 @@ Proof
   irule DIVIDES_TRANS >>
   qexists_tac ‘x’ >>
   rw[]
-   
+QED
+
+val th = SPEC “FACT n + 1” PRIME_FACTOR;
+        
+Theorem EUCLID:
+  ∀n. ∃p. n < p ∧ prime p
+Proof:
+  spose_not_then strip_assume_tac >>
+  mp_tac $ SPEC “FACT n + 1” PRIME_FACTOR >>
+  rw[] >-
+  rw[FACT_LESS, DECIDE “∀x. x ≠ 0 ⇔ 0 < x”] >>
+  rw[GSYM IMP_DISJ_THM] >>
+  
