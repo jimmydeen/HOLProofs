@@ -142,10 +142,20 @@ val th = SPEC “FACT n + 1” PRIME_FACTOR;
         
 Theorem EUCLID:
   ∀n. ∃p. n < p ∧ prime p
-Proof:
+Proof
   spose_not_then strip_assume_tac >>
   mp_tac $ SPEC “FACT n + 1” PRIME_FACTOR >>
-  rw[] >-
-  rw[FACT_LESS, DECIDE “∀x. x ≠ 0 ⇔ 0 < x”] >>
-  rw[GSYM IMP_DISJ_THM] >>
-  
+  (rw[] >-
+    rw[FACT_LESS, DECIDE “∀x. x ≠ 0 ⇔ 0 < x”]) >>
+   rw[GSYM IMP_DISJ_THM] >>
+   last_x_assum $ qspec_then ‘p’ mp_tac >>
+   rw[NOT_LESS] >> 
+   drule_then strip_assume_tac PRIME_POS >>
+   drule_all_then strip_assume_tac DIV_FACT >>
+   strip_tac >>
+   drule_all_then strip_assume_tac DIVIDES_ADDL >>
+   fs[DIVIDES_ONE, NOT_PRIME_1]
+QED
+                  
+     
+
